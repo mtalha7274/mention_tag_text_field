@@ -231,7 +231,9 @@ class MentionTagTextEditingController extends TextEditingController {
 
     // Check if the mention starts with '#' and ends with a space
     if (mention != null && mention.startsWith('#') && value.endsWith(' ')) {
-      addMention(label: mention.replaceFirst('#', ''), data: mention.replaceFirst('#', ''), stylingWidget: null);
+      final processedMention = mention.replaceFirst('#', '').trim();
+      addMention(
+          label: processedMention, data: processedMention, stylingWidget: null);
       _updateOnMention(null);
     }
 
