@@ -106,6 +106,12 @@ class MentionTagTextEditingController extends TextEditingController {
     Widget? stylingWidget,
   }) {
     final indexCursor = selection.base.offset;
+
+    // Ensure _mentionInput is not null
+    if (_mentionInput == null || _mentionInput!.isEmpty) {
+      return;
+    }
+
     final mentionSymbol = _mentionInput!.first;
 
     final mention = mentionTagDecoration.showMentionStartSymbol
@@ -222,6 +228,12 @@ class MentionTagTextEditingController extends TextEditingController {
     _indexMentionEnd = null;
     String? mention = _getMention(value);
     _updateOnMention(mention);
+
+    // Check if the mention starts with '#' and ends with a space
+    if (mention != null && mention.startsWith('#') && value.endsWith(' ')) {
+      addMention(label: mention.replaceFirst('#', ''), data: mention.replaceFirst('#', ''), stylingWidget: null);
+      _updateOnMention(null);
+    }
 
     if (value.length < _temp.length) {
       _updadeMentions(value);
