@@ -41,7 +41,7 @@ class _MentionTagTextFieldExampleState
   @override
   void initState() {
     super.initState();
-    _controller.setText = "Hello @Emily Johnson ";
+    _controller.setText = "Hello @Emily Johnson";
   }
 
   String? mentionValue;
@@ -78,6 +78,9 @@ class _MentionTagTextFieldExampleState
       keyboardType: TextInputType.multiline,
       minLines: 1,
       maxLines: 5,
+      onUrlsFound: (urls){
+        print(urls);
+      },
       controller: _controller,
       initialMentions: const [
         ('@Emily Johnson', User(id: 1, name: 'Emily Johnson'), null)
