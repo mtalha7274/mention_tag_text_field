@@ -3,7 +3,9 @@ import 'package:mention_tag_text_field/src/constants.dart';
 import 'package:mention_tag_text_field/src/mention_tag_data.dart';
 import 'package:mention_tag_text_field/src/mention_tag_decoration.dart';
 import 'package:mention_tag_text_field/src/string_extensions.dart';
-
+final RegExp _urlSearchRegex = RegExp(
+  r'(?:(?:https?:\/\/|www\.)[\w@:%._\+~#=\/?&-]+)|(?:youtu\.be\/[\w@:%_\+,.~#?&\/=-]+)',
+);
 class MentionTagTextEditingController extends TextEditingController {
   MentionTagTextEditingController() {
     addListener(_updateCursorPostion);
@@ -67,6 +69,7 @@ class MentionTagTextEditingController extends TextEditingController {
 
   late MentionTagDecoration mentionTagDecoration;
   void Function(String?)? onMention;
+  void Function(List<String>)? onUrlsFound;
 
   set initialMentions(List<(String, Object?, Widget?)> value) {
     for (final mentionTuple in value) {
@@ -106,6 +109,12 @@ class MentionTagTextEditingController extends TextEditingController {
     Widget? stylingWidget,
   }) {
     final indexCursor = selection.base.offset;
+
+    // Ensure _mentionInput is not null
+    if (_mentionInput == null || _mentionInput!.isEmpty) {
+      return;
+    }
+
     final mentionSymbol = _mentionInput!.first;
 
     final mention = mentionTagDecoration.showMentionStartSymbol
@@ -223,6 +232,14 @@ class MentionTagTextEditingController extends TextEditingController {
     String? mention = _getMention(value);
     _updateOnMention(mention);
 
+    // Check if the mention starts with '#' and ends with a space
+    if (mention != null && mention.startsWith('#') && value.endsWith(' ')) {
+      final processedMention = mention.replaceFirst('#', '').trim();
+      addMention(
+          label: processedMention, data: processedMention, stylingWidget: null);
+      _updateOnMention(null);
+    }
+
     if (value.length < _temp.length) {
       _updadeMentions(value);
     }
@@ -292,33 +309,73 @@ class MentionTagTextEditingController extends TextEditingController {
     }
   }
 
-  @override
-  TextSpan buildTextSpan(
-      {required BuildContext context,
-      TextStyle? style,
-      required bool withComposing}) {
-    final regexp = RegExp(
-        '(?=${Constants.mentionEscape})|(?<=${Constants.mentionEscape})');
-    final res = super.text.split(regexp);
-    final List tempList = List.from(_mentions);
+ @override
+TextSpan buildTextSpan({
+  required BuildContext context,
+  TextStyle? style,
+  required bool withComposing,
+}) {
+  // Combined pattern to detect mentions and URLs
+  final combinedPattern = RegExp(
+    '(${Constants.mentionEscape})|(${_urlSearchRegex.pattern})',
+  );
 
-    return TextSpan(
-      style: style,
-      children: res.map((e) {
-        if (e == Constants.mentionEscape) {
-          final mention = tempList.removeAt(0);
+  final matches = combinedPattern.allMatches(super.text);
+  List<InlineSpan> spans = [];
+  int currentIndex = 0;
 
-          return WidgetSpan(
-            alignment: PlaceholderAlignment.middle,
-            child: mention.stylingWidget ??
-                Text(
-                  mention.mention,
-                  style: mentionTagDecoration.mentionTextStyle,
-                ),
-          );
-        }
-        return TextSpan(text: e, style: style);
-      }).toList(),
-    );
+  final List tempList = List.from(_mentions);
+  List<String> detectedUrls = [];
+
+  for (final match in matches) {
+    if (match.start > currentIndex) {
+      // Add the text before the match as regular text
+      spans.add(TextSpan(
+        text: super.text.substring(currentIndex, match.start),
+        style: style,
+      ));
+    }
+
+    if (match.group(1) != null) {
+      // Mention escape character
+      if (tempList.isNotEmpty) {
+        final mention = tempList.removeAt(0);
+        spans.add(WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: mention.stylingWidget ??
+              Text(
+                mention.mention,
+                style: mentionTagDecoration.mentionTextStyle,
+              ),
+        ));
+      }
+    } else if (match.group(2) != null) {
+      // URL detected
+      final url = match.group(2)!;
+      detectedUrls.add(url);
+      spans.add(TextSpan(
+        text: url,
+        style: mentionTagDecoration.mentionTextStyle,
+      ));
+    }
+
+    currentIndex = match.end;
   }
+
+  if (currentIndex < super.text.length) {
+    spans.add(TextSpan(
+      text: super.text.substring(currentIndex),
+      style: style,
+    ));
+  }
+    // Invoke the callback if URLs are found
+    if (detectedUrls.isNotEmpty) {
+      onUrlsFound?.call(detectedUrls);
+    }
+
+  return TextSpan(
+    style: style,
+    children: spans,
+  );
+}
 }
