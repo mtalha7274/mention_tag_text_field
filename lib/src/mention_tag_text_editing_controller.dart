@@ -45,8 +45,8 @@ class MentionTagTextEditingController extends TextEditingController {
     return super.text.replaceAllMapped(Constants.mentionEscape, (match) {
       final MentionTagElement removedMention = tempList.removeAt(0);
       final String mention = mentionTagDecoration.showMentionStartSymbol
-          ? removedMention.mention
-          : "${removedMention.mentionSymbol}${removedMention.mention}";
+          ? "${removedMention.mentionSymbol}${removedMention.mention}"
+          : removedMention.mention;
       return mention;
     });
   }
