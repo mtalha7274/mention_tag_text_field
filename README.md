@@ -163,6 +163,10 @@ To get the text with mention labels in it, use
 final String textWithMentions = _controller.getText;
 ```
 
+**Copying and Cutting**
+
+You can copy and cut selection text by overriding `contextMenuBuilder`. See the example for a full implementation.
+
 ## Additional information
 - **Contributing**: Contributions are welcome! Feel free to open issues or submit pull requests on [GitHub](https://github.com/iWOLFSTEIN/mention_tag_text_field).
 - **Support & Feedback**: You can expect prompt responses and support from the package maintainers.
