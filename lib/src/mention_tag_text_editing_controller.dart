@@ -4,7 +4,7 @@ import 'package:mention_tag_text_field/src/mention_tag_data.dart';
 import 'package:mention_tag_text_field/src/mention_tag_decoration.dart';
 import 'package:mention_tag_text_field/src/string_extensions.dart';
 final RegExp _urlSearchRegex = RegExp(
-  r'(?:(?:https?:\/\/|www\.)[\w@:%._\+~#=\/?&-]+)|(?:youtu\.be\/[\w@:%_\+,.~#?&\/=-]+)',
+  r'(?:(?:https?:\/\/|www\.)[\w@:%._\+~#=\/?&,\-]+)|(?:youtu\.be\/[\w@:%_\+,.~#?&\/=\-]+)',
 );
 class MentionTagTextEditingController extends TextEditingController {
   MentionTagTextEditingController() {
