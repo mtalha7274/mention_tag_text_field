@@ -1,6 +1,6 @@
 name: mention_tag_text_field
 description: "A Flutter package which adds the mention or tag capabilities to existing TextField or TextFormField widget in Flutter."
-version: 0.0.7
+version: 0.0.8
 repository: "https://github.com/iWOLFSTEIN/mention_tag_text_field"
 
 environment:

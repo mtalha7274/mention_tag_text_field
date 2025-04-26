@@ -1,3 +1,7 @@
+## 0.0.8
+**Added**
+- Copy/cut support and example added.
+
 ## 0.0.7
 **Fixed**
 - Mention not triggering on line breaks.
