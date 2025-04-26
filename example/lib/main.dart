@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:example/environment_variable_example.dart';
 import 'package:flutter/material.dart';
 import 'package:mention_tag_text_field/mention_tag_text_field.dart';
 import 'package:http/http.dart' as http;
@@ -14,12 +15,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MentionTagTextFieldExample(),
-    );
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        // home: const MentionTagTextFieldExample(),
+        home: const EnvironmentVariableExample());
   }
 }
 
