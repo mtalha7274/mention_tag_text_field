@@ -197,7 +197,7 @@ class MentionTagTextEditingController extends TextEditingController {
 
     if (indexMentionFromStart != -1) {
       final indexMentionStart = indexCursor - indexMentionFromStart;
-      _indexMentionEnd = (indexMentionStart + indexMentionFromStart) - 1;
+      _indexMentionEnd = indexCursor - 1;
 
       if (value.length == 1) return value.first;
 
