@@ -33,7 +33,8 @@ class MentionTagTextEditingController extends TextEditingController {
   final List<MentionTagElement> _mentions = [];
 
   /// Get the list of data associated with you mentions, if no data was given the mention labels will be returned.
-  List get mentions => List.from(_mentions.map((mention) => mention.data ?? mention.mention));
+  List get mentions =>
+      List.from(_mentions.map((mention) => mention.data ?? mention.mention));
 
   /// Used to set initial text with mentions in it
   set setText(String newText) {
@@ -61,15 +62,18 @@ class MentionTagTextEditingController extends TextEditingController {
     final finalIndex = max(selection.end, 0);
 
     final beforeSelectionText = super.text.substring(0, startIndex);
-    final beforeSectionMentionCount = beforeSelectionText.countChar(Constants.mentionEscape);
+    final beforeSectionMentionCount =
+        beforeSelectionText.countChar(Constants.mentionEscape);
 
     final selectionText = super.text.substring(startIndex, finalIndex);
-    final sectionMentionCount = selectionText.countChar(Constants.mentionEscape);
+    final sectionMentionCount =
+        selectionText.countChar(Constants.mentionEscape);
 
     final tempList = _mentions.sublist(beforeSectionMentionCount);
 
     if (cut) {
-      _mentions.removeRange(beforeSectionMentionCount, beforeSectionMentionCount + sectionMentionCount);
+      _mentions.removeRange(beforeSectionMentionCount,
+          beforeSectionMentionCount + sectionMentionCount);
       super.text = super.text.replaceRange(startIndex, finalIndex, '');
       _temp = super.text;
     }
@@ -87,7 +91,8 @@ class MentionTagTextEditingController extends TextEditingController {
   void remove({required int index}) {
     try {
       _mentions.removeAt(index);
-      super.text = super.text.removeCharacterAtCount(Constants.mentionEscape, index + 1);
+      super.text =
+          super.text.removeCharacterAtCount(Constants.mentionEscape, index + 1);
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -99,18 +104,24 @@ class MentionTagTextEditingController extends TextEditingController {
   set initialMentions(List<(String, Object?, Widget?)> value) {
     for (final mentionTuple in value) {
       if (!super.text.contains(mentionTuple.$1)) return;
-      super.text = super.text.replaceFirst(mentionTuple.$1, Constants.mentionEscape);
+      super.text =
+          super.text.replaceFirst(mentionTuple.$1, Constants.mentionEscape);
       _temp = super.text;
 
-      final mentionSymbol = mentionTuple.$1.checkMentionSymbol(mentionTagDecoration.mentionStart);
+      final mentionSymbol =
+          mentionTuple.$1.checkMentionSymbol(mentionTagDecoration.mentionStart);
       if (mentionSymbol.isEmpty) throw 'No mention symbol with initialMention';
 
       final mention = mentionTagDecoration.showMentionStartSymbol
           ? mentionTuple.$1
-          : mentionTuple.$1.removeMentionStart(mentionTagDecoration.mentionStart);
+          : mentionTuple.$1
+              .removeMentionStart(mentionTagDecoration.mentionStart);
 
       _mentions.add(MentionTagElement(
-          mentionSymbol: mentionSymbol, mention: mention, data: mentionTuple.$2, stylingWidget: mentionTuple.$3));
+          mentionSymbol: mentionSymbol,
+          mention: mention,
+          data: mentionTuple.$2,
+          stylingWidget: mentionTuple.$3));
     }
   }
 
@@ -130,9 +141,14 @@ class MentionTagTextEditingController extends TextEditingController {
     final indexCursor = selection.base.offset;
     final mentionSymbol = _mentionInput!.first;
 
-    final mention = mentionTagDecoration.showMentionStartSymbol ? "$mentionSymbol$label" : label;
-    final MentionTagElement mentionTagElement =
-        MentionTagElement(mentionSymbol: mentionSymbol, mention: mention, data: data, stylingWidget: stylingWidget);
+    final mention = mentionTagDecoration.showMentionStartSymbol
+        ? "$mentionSymbol$label"
+        : label;
+    final MentionTagElement mentionTagElement = MentionTagElement(
+        mentionSymbol: mentionSymbol,
+        mention: mention,
+        data: data,
+        stylingWidget: stylingWidget);
 
     final textPart = super.text.substring(0, indexCursor);
     final indexPosition = textPart.countChar(Constants.mentionEscape);
@@ -143,16 +159,20 @@ class MentionTagTextEditingController extends TextEditingController {
 
   void _replaceLastSubstringWithEscaping(int indexCursor, String replacement) {
     try {
-      _replaceLastSubstring(indexCursor, Constants.mentionEscape, allowDecrement: false);
+      _replaceLastSubstring(indexCursor, Constants.mentionEscape,
+          allowDecrement: false);
 
       selection = TextSelection.collapsed(
-          offset: indexCursor - replacement.length + (1 + mentionTagDecoration.mentionBreak.length));
+          offset: indexCursor -
+              replacement.length +
+              (1 + mentionTagDecoration.mentionBreak.length));
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  void _replaceLastSubstring(int indexCursor, String replacement, {bool allowDecrement = true}) {
+  void _replaceLastSubstring(int indexCursor, String replacement,
+      {bool allowDecrement = true}) {
     if (super.text.length == 1) {
       super.text = !allowDecrement
           ? "$replacement${mentionTagDecoration.mentionBreak}"
@@ -164,15 +184,19 @@ class MentionTagTextEditingController extends TextEditingController {
     var indexMentionStart = _getIndexFromMentionStart(indexCursor, super.text);
     indexMentionStart = indexCursor - indexMentionStart;
 
-    super.text = super.text.replaceRange(!allowDecrement ? indexMentionStart - 1 : indexMentionStart, indexCursor,
+    super.text = super.text.replaceRange(
+        !allowDecrement ? indexMentionStart - 1 : indexMentionStart,
+        indexCursor,
         "$replacement${mentionTagDecoration.mentionBreak}");
 
     _temp = super.text;
   }
 
   int _getIndexFromMentionStart(int indexCursor, String value) {
-    final mentionStartPattern = RegExp(mentionTagDecoration.mentionStart.join('|'));
-    var indexMentionStart = value.substring(0, indexCursor).reversed.indexOf(mentionStartPattern);
+    final mentionStartPattern =
+        RegExp(mentionTagDecoration.mentionStart.join('|'));
+    var indexMentionStart =
+        value.substring(0, indexCursor).reversed.indexOf(mentionStartPattern);
     return indexMentionStart;
   }
 
@@ -194,7 +218,10 @@ class MentionTagTextEditingController extends TextEditingController {
     final indexMentionFromStart = _getIndexFromMentionStart(indexCursor, value);
 
     if (mentionTagDecoration.maxWords != null) {
-      final indexMentionEnd = value.substring(0, indexCursor).reversed.indexOfNthSpace(mentionTagDecoration.maxWords!);
+      final indexMentionEnd = value
+          .substring(0, indexCursor)
+          .reversed
+          .indexOfNthSpace(mentionTagDecoration.maxWords!);
 
       if (indexMentionEnd != -1 && indexMentionEnd < indexMentionFromStart) {
         return null;
@@ -209,7 +236,9 @@ class MentionTagTextEditingController extends TextEditingController {
 
       if (!_isMentionEmbeddedOrDistinct(value, indexMentionStart)) return null;
 
-      if (indexMentionStart != -1 && indexMentionStart >= 0 && indexMentionStart <= indexCursor) {
+      if (indexMentionStart != -1 &&
+          indexMentionStart >= 0 &&
+          indexMentionStart <= indexCursor) {
         return value.substring(indexMentionStart - 1, indexCursor);
       }
     }
@@ -242,11 +271,15 @@ class MentionTagTextEditingController extends TextEditingController {
     if (_temp.length - value.length != 1) return;
     if (mentionsCountTillCursor < 1) return;
 
-    var indexMentionEscape = value.substring(0, indexCursor).reversed.indexOf(Constants.mentionEscape);
+    var indexMentionEscape = value
+        .substring(0, indexCursor)
+        .reversed
+        .indexOf(Constants.mentionEscape);
     indexMentionEscape = indexCursor - indexMentionEscape - 1;
     final isCursorAtMention = (indexCursor - indexMentionEscape) == 1;
     if (isCursorAtMention) {
-      final MentionTagElement cursorMention = _mentions[mentionsCountTillCursor - 1];
+      final MentionTagElement cursorMention =
+          _mentions[mentionsCountTillCursor - 1];
       final mentionText = mentionTagDecoration.showMentionStartSymbol
           ? cursorMention.mention
           : "${cursorMention.mentionSymbol}${cursorMention.mention}";
@@ -260,21 +293,26 @@ class MentionTagTextEditingController extends TextEditingController {
 
       final mentionsCount = value.countChar(Constants.mentionEscape);
       final textPart = super.text.substring(0, indexCursor);
-      final mentionsCountTillCursor = textPart.countChar(Constants.mentionEscape);
+      final mentionsCountTillCursor =
+          textPart.countChar(Constants.mentionEscape);
 
       _checkAndUpdateOnMention(value, mentionsCountTillCursor, indexCursor);
       if (mentionsCount == _mentions.length) return;
 
-      final MentionTagElement removedMention = _mentions.removeAt(mentionsCountTillCursor);
+      final MentionTagElement removedMention =
+          _mentions.removeAt(mentionsCountTillCursor);
 
-      if (mentionTagDecoration.allowDecrement && _temp.length - value.length == 1) {
-        String replacementText = removedMention.mention.substring(0, removedMention.mention.length - 1);
+      if (mentionTagDecoration.allowDecrement &&
+          _temp.length - value.length == 1) {
+        String replacementText = removedMention.mention
+            .substring(0, removedMention.mention.length - 1);
 
         replacementText = mentionTagDecoration.showMentionStartSymbol
             ? replacementText
             : "${removedMention.mentionSymbol}$replacementText";
 
-        super.text = super.text.replaceRange(indexCursor, indexCursor, replacementText);
+        super.text =
+            super.text.replaceRange(indexCursor, indexCursor, replacementText);
 
         final offset = mentionTagDecoration.showMentionStartSymbol
             ? indexCursor + removedMention.mention.length - 1
@@ -288,8 +326,12 @@ class MentionTagTextEditingController extends TextEditingController {
   }
 
   @override
-  TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
-    final regexp = RegExp('(?=${Constants.mentionEscape})|(?<=${Constants.mentionEscape})');
+  TextSpan buildTextSpan(
+      {required BuildContext context,
+      TextStyle? style,
+      required bool withComposing}) {
+    final regexp = RegExp(
+        '(?=${Constants.mentionEscape})|(?<=${Constants.mentionEscape})');
     final res = super.text.split(regexp);
     final List tempList = List.from(_mentions);
 
