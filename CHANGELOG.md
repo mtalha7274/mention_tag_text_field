@@ -1,3 +1,7 @@
+## 0.0.9
+**Updated**
+- Referenced gif and image in the documentation
+
 ## 0.0.8
 **Added**
 - Copy/cut support and example added.

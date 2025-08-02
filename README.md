@@ -1,6 +1,6 @@
 This package extends the capabilties of a normal TextField or TextFormField to enable mention or tagging.
 <p align="center">
-  <img src="https://s10.gifyu.com/images/SfUtS.gif" alt="Demo GIF" />
+  <img src="https://s14.gifyu.com/images/bNspb.gif" alt="Demo GIF" />
 </p>
 
 ## Getting started
@@ -136,7 +136,7 @@ _controller.addMention(label: 'Emma Miller', data: User(id: 1, name: 'Emma Mille
    ));
 ```
 <p align="center">
-  <img src="https://s12.gifyu.com/images/SfZBv.png" alt="Demo Image" />
+  <img src="https://s14.gifyu.com/images/bNsp5.png" alt="Demo Image" />
 </p>
 
 **Removing Mentions Manually**
